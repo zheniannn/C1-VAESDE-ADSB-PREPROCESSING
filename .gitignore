@@ -1,0 +1,22 @@
+# Raw hourly ADS-B state files (~2 GB each, 96 files)
+data/archive/states_*.csv
+
+# Intermediate large outputs
+data/preprocess_01_output/
+data/preprocess_03_output/
+data/preprocess_04_output/trajectory_segments.csv
+data/preprocess_05_output/trajectory_segments_enu_with_velocity.csv
+data/preprocess_06_output/trajectory_segments_enu_clean.csv
+
+# Train/test split source files (~684 MB + 73 MB)
+data/train_segments_enu_clean.csv
+data/test_segments_enu_clean.csv
+
+# Sequence dataset arrays — too large for GitHub
+data/X_train.npy
+data/X_test.npy
+data/train_sequence_metadata.csv
+data/test_sequence_metadata.csv
+
+__pycache__/
+*.pyc
