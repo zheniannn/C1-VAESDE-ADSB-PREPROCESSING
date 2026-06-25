@@ -1,3 +1,9 @@
+# All data outputs (too large for GitHub)
+data/
+
+# Cloned helper repo (tracked separately)
+SKILLS/
+
 # Raw hourly ADS-B state files (~2 GB each, 96 files)
 data/archive/states_*.csv
 
