@@ -1,0 +1,40 @@
+dates:
+  - "2022-06-06"
+  - "2022-06-13"
+  - "2022-06-20"
+  - "2022-06-27"
+
+aircraft_db: "data/preprocess_02_output/aircraftDatabase-2022-06-FixedWingGA.csv"
+aircraft_db_raw: "data/archive/aircraftDatabase-2022-06.csv"
+
+trajectory:
+  max_time_gap_s:  60
+  max_implied_kt:  250
+  min_duration_s:  300
+  min_alt_m:       152.4
+  max_alt_m:       9144.0
+
+cleaning:
+  max_speed_mps:   150.0
+  max_accel_mps2:  10.0
+
+split:
+  train_frac: 0.90
+  seed:       42
+
+sequences:
+  features:         ["E_m", "N_m", "vE_mps", "vN_mps"]
+  sequence_length:  30
+  stride:           5
+
+paths:
+  archive_dir:   "data/archive"
+  stage_01_out:  "data/preprocess_01_output"
+  stage_02_out:  "data/preprocess_02_output"
+  stage_03_out:  "data/preprocess_03_output"
+  stage_04_out:  "data/preprocess_04_output"
+  stage_05_out:  "data/preprocess_05_output"
+  stage_06_out:  "data/preprocess_06_output"
+  train_csv:     "data/train_segments_enu_clean.csv"
+  test_csv:      "data/test_segments_enu_clean.csv"
+  dataset_out:   "data"

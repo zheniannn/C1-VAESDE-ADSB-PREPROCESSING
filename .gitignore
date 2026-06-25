@@ -26,3 +26,6 @@ data/test_sequence_metadata.csv
 
 __pycache__/
 *.pyc
+*.egg-info/
+.pytest_cache/
+
