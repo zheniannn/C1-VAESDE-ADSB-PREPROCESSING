@@ -76,3 +76,58 @@ def process_segment(rows: list, max_speed_mps: float, max_accel_mps2: float) -> 
     seg["aU_mps2"]    = aU
     seg["accel_mps2"] = accel
     return seg, summary
+
+
+def stream_clean_segments(
+    input_csv:      str,
+    output_csv:     str,
+    max_speed_mps:  float,
+    max_accel_mps2: float,
+    chunk_size:     int = 100_000,
+) -> tuple[pd.DataFrame, int, int, int, int]:
+    """
+    Stream input_csv, drop outlier segments, write clean rows to output_csv.
+
+    Returns (summary_df, n_rows_in, n_rows_out, n_segs_total, n_segs_kept).
+    """
+    summary_rows:   list[dict]         = []
+    buffer_rows:    list[pd.DataFrame] = []
+    current_seg_id: int | None         = None
+
+    n_rows_in = n_rows_out = n_segs_total = n_segs_kept = 0
+    header_done = False
+    n_chunks    = 0
+
+    with open(output_csv, "w") as out_f:
+        for chunk in pd.read_csv(input_csv, chunksize=chunk_size, low_memory=False):
+            n_rows_in += len(chunk)
+            n_chunks  += 1
+            if n_chunks % 20 == 0:
+                print(f"  ... chunk {n_chunks:>4}  rows: {n_rows_in:>10,}  segs: {n_segs_total:>7,}")
+
+            for seg_id, grp in chunk.groupby("segment_id", sort=True):
+                if seg_id != current_seg_id:
+                    if buffer_rows:
+                        result, summary = process_segment(buffer_rows, max_speed_mps, max_accel_mps2)
+                        summary_rows.append(summary)
+                        n_segs_total += 1
+                        if result is not None:
+                            result.to_csv(out_f, index=False, header=not header_done)
+                            header_done = True
+                            n_rows_out += len(result)
+                            n_segs_kept += 1
+                    buffer_rows    = [grp]
+                    current_seg_id = seg_id
+                else:
+                    buffer_rows.append(grp)
+
+        if buffer_rows:
+            result, summary = process_segment(buffer_rows, max_speed_mps, max_accel_mps2)
+            summary_rows.append(summary)
+            n_segs_total += 1
+            if result is not None:
+                result.to_csv(out_f, index=False, header=not header_done)
+                n_rows_out += len(result)
+                n_segs_kept += 1
+
+    return pd.DataFrame(summary_rows), n_rows_in, n_rows_out, n_segs_total, n_segs_kept

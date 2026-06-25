@@ -16,20 +16,16 @@ import pandas as pd
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _CONFIG_PATH  = os.path.join(_PROJECT_ROOT, "configs", "pipeline.yaml")
 
-CHUNK_SIZE_06 = 100_000
-
 from adsb_preprocess.io_utils     import load_config
-from adsb_preprocess.trajectories import clean_day, split_into_segments, KNOTS_TO_MS
+from adsb_preprocess.trajectories import clean_day, split_into_segments, KNOTS_TO_MS, SEG_COLS
 from adsb_preprocess.enu          import convert_all_segments
-from adsb_preprocess.cleaning     import process_segment
+from adsb_preprocess.cleaning     import stream_clean_segments
 
 
 def run_generate_trajectories():
     """Build trajectory segments from per-day GA state files."""
-    cfg    = load_config(_CONFIG_PATH)
-    tr_cfg = cfg["trajectory"]
-    dates  = cfg["dates"]
-    in_dir = cfg["paths"]["stage_03_out"]
+    cfg     = load_config(_CONFIG_PATH)
+    tr_cfg  = cfg["trajectory"]
     out_dir = cfg["paths"]["stage_04_out"]
 
     SEG_PATH = os.path.join(out_dir, "trajectory_segments.csv")
@@ -37,29 +33,21 @@ def run_generate_trajectories():
     RES_PATH = os.path.join(out_dir, "Results.csv")
 
     max_implied_ms = tr_cfg["max_implied_kt"] * KNOTS_TO_MS
-
     os.makedirs(out_dir, exist_ok=True)
-
-    from adsb_preprocess.trajectories import SEG_COLS
     pd.DataFrame(columns=SEG_COLS).to_csv(SEG_PATH, index=False)
 
-    total_drops       = {'raw': 0, 'lat_lon': 0, 'duplicates': 0, 'onground': 0,
-                         'alt_missing': 0, 'alt_range': 0, 'after_filter': 0}
     all_summary_rows  = []
     global_seg_id     = 0
     observed_aircraft = set()
     seg_pings_discarded = 0
 
-    for date in dates:
-        path = os.path.join(in_dir, f"states_{date}-FixedWingGA.csv")
+    for date in cfg["dates"]:
+        path = os.path.join(cfg["paths"]["stage_03_out"], f"states_{date}-FixedWingGA.csv")
         print(f"\n{'='*55}\n  {date}\n{'='*55}")
 
         df = pd.read_csv(path, low_memory=False)
         df, drops = clean_day(df, date, tr_cfg["min_alt_m"], tr_cfg["max_alt_m"])
-
         print(f"  After row filters: {drops['after_filter']:,} rows remaining")
-        for k, v in drops.items():
-            total_drops[k] = total_drops.get(k, 0) + (v if k != 'after_filter' else v)
 
         seg_frames, summary_rows, global_seg_id, time_splits, speed_splits, pings_disc = \
             split_into_segments(
@@ -69,33 +57,30 @@ def run_generate_trajectories():
 
         seg_pings_discarded += pings_disc
         all_summary_rows.extend(summary_rows)
-        for icao24 in df['icao24'].unique():
-            observed_aircraft.add(icao24)
+        observed_aircraft.update(df['icao24'].unique())
 
         if seg_frames:
             pd.concat(seg_frames, ignore_index=True).to_csv(SEG_PATH, mode='a', header=False, index=False)
 
         print(f"  Time-gap splits: {time_splits:,}  Speed splits: {speed_splits:,}")
-        print(f"  Pings in short segments dropped: {pings_disc:,}")
+        print(f"  Short-segment pings dropped: {pings_disc:,}")
         print(f"  Running total segments: {global_seg_id:,}")
 
-    df_sum = pd.DataFrame(all_summary_rows)
+    df_sum  = pd.DataFrame(all_summary_rows)
     df_sum.to_csv(SUM_PATH, index=False)
 
     ga_registry = len(pd.read_csv(cfg["aircraft_db"], usecols=['icao24']))
     dur_min     = df_sum['duration_seconds'] / 60
-    results = pd.DataFrame({
+    pd.DataFrame({
         'Metric': ['Aircraft in GA registry', 'Aircraft observed flying (across 4 days)',
                    'Trajectory segments', 'ADS-B pings in output',
                    'Mean segment duration', 'Median segment duration', 'Max segment duration'],
         'Value':  [ga_registry, len(observed_aircraft), global_seg_id,
                    int(df_sum['n_points'].sum()),
                    f"{dur_min.mean():.1f} min", f"{dur_min.median():.1f} min", f"{dur_min.max():.1f} min"],
-    })
-    results.to_csv(RES_PATH, index=False)
-    print(f"\n[04] Saved {len(df_sum):,} segments → {SUM_PATH}")
-    for _, row in results.iterrows():
-        print(f"  {row['Metric']}: {row['Value']}")
+    }).to_csv(RES_PATH, index=False)
+
+    print(f"\n[04] {global_seg_id:,} segments → {SEG_PATH}")
 
 
 def run_convert_enu():
@@ -116,9 +101,8 @@ def run_convert_enu():
     df = pd.read_csv(INPUT_CSV, low_memory=False)
     print(f"  Rows: {len(df):,}  Segments: {df['segment_id'].nunique():,}")
 
-    critical = ["segment_id", "time", "lat", "lon", ALT_COL]
-    before   = len(df)
-    df       = df.dropna(subset=critical)
+    before = len(df)
+    df     = df.dropna(subset=["segment_id", "time", "lat", "lon", ALT_COL])
     if before - len(df):
         print(f"  Dropped {before - len(df):,} rows with missing critical values")
 
@@ -126,20 +110,12 @@ def run_convert_enu():
 
     result_df.to_csv(OUTPUT_CSV,   index=False)
     summary_df.to_csv(SUMMARY_CSV, index=False)
-    print(f"[05] Saved {len(result_df):,} rows → {OUTPUT_CSV}")
 
-    total_skipped = sum(skip_report.values())
-    print(f"  Skipped: {total_skipped:,}")
-    for reason, cnt in sorted(skip_report.items(), key=lambda x: -x[1]):
-        print(f"    {reason:<35}: {cnt:,}")
-
-    # Sanity checks
     first_pts  = result_df.groupby("segment_id").first()[["E_m", "N_m", "U_m"]]
     max_origin = first_pts.abs().max().max()
-    enu_cols   = ["E_m", "N_m", "U_m", "vE_mps", "vN_mps", "vU_mps"]
-    total_nans = result_df[enu_cols].isnull().sum().sum()
-    print(f"  Max |origin|: {max_origin:.2e} m  {'OK' if max_origin < 1e-3 else 'WARNING'}")
-    print(f"  NaN in ENU/vel: {total_nans}  {'OK' if total_nans == 0 else 'WARNING'}")
+    total_nans = result_df[["E_m", "N_m", "U_m", "vE_mps", "vN_mps", "vU_mps"]].isnull().sum().sum()
+    print(f"[05] {len(result_df):,} rows → {OUTPUT_CSV}")
+    print(f"  Skipped: {sum(skip_report.values()):,}  Max |origin|: {max_origin:.2e} m  NaNs: {total_nans}")
 
 
 def run_clean_outliers():
@@ -157,46 +133,10 @@ def run_clean_outliers():
     os.makedirs(out_dir, exist_ok=True)
     print(f"\n{'='*60}\n  Stage 06: Clean outliers\n  Input : {INPUT_CSV}\n{'='*60}")
 
-    summary_rows:   list[dict]           = []
-    buffer_rows:    list[pd.DataFrame]   = []
-    current_seg_id: int | None           = None
+    summary_df, n_rows_in, n_rows_out, n_segs_total, n_segs_kept = stream_clean_segments(
+        INPUT_CSV, OUTPUT_CSV, cl_cfg["max_speed_mps"], cl_cfg["max_accel_mps2"]
+    )
 
-    n_rows_in = n_rows_out = n_segs_total = n_segs_kept = 0
-    header_done = False
-    n_chunks    = 0
-
-    with open(OUTPUT_CSV, "w") as out_f:
-
-        def flush(rows):
-            nonlocal n_segs_total, n_segs_kept, n_rows_out, header_done
-            if not rows:
-                return
-            result, summary = process_segment(rows, cl_cfg["max_speed_mps"], cl_cfg["max_accel_mps2"])
-            summary_rows.append(summary)
-            n_segs_total += 1
-            if result is not None:
-                result.to_csv(out_f, index=False, header=not header_done)
-                header_done = True
-                n_rows_out += len(result)
-                n_segs_kept += 1
-
-        for chunk in pd.read_csv(INPUT_CSV, chunksize=CHUNK_SIZE_06, low_memory=False):
-            n_rows_in += len(chunk)
-            n_chunks  += 1
-            if n_chunks % 20 == 0:
-                print(f"  ... chunk {n_chunks:>4}  rows: {n_rows_in:>10,}  segs: {n_segs_total:>7,}")
-
-            for seg_id, grp in chunk.groupby("segment_id", sort=True):
-                if seg_id != current_seg_id:
-                    flush(buffer_rows)
-                    buffer_rows    = [grp]
-                    current_seg_id = seg_id
-                else:
-                    buffer_rows.append(grp)
-
-        flush(buffer_rows)
-
-    summary_df = pd.DataFrame(summary_rows)
     summary_df.to_csv(SUMMARY_CSV, index=False)
     summary_df[summary_df["drop_reason"] != "keep"].to_csv(DROPPED_CSV, index=False)
 
