@@ -1,0 +1,129 @@
+=== Stage 01: Concat daily ===
+[01] 2022-06-06: 24 hourly files
+  [1/24] data/archive/states_2022-06-06-00.csv
+  [2/24] data/archive/states_2022-06-06-01.csv
+  [3/24] data/archive/states_2022-06-06-02.csv
+  [4/24] data/archive/states_2022-06-06-03.csv
+  [5/24] data/archive/states_2022-06-06-04.csv
+  [6/24] data/archive/states_2022-06-06-05.csv
+  [7/24] data/archive/states_2022-06-06-06.csv
+  [8/24] data/archive/states_2022-06-06-07.csv
+  [9/24] data/archive/states_2022-06-06-08.csv
+  [10/24] data/archive/states_2022-06-06-09.csv
+  [11/24] data/archive/states_2022-06-06-10.csv
+  [12/24] data/archive/states_2022-06-06-11.csv
+  [13/24] data/archive/states_2022-06-06-12.csv
+  [14/24] data/archive/states_2022-06-06-13.csv
+  [15/24] data/archive/states_2022-06-06-14.csv
+  [16/24] data/archive/states_2022-06-06-15.csv
+  [17/24] data/archive/states_2022-06-06-16.csv
+  [18/24] data/archive/states_2022-06-06-17.csv
+  [19/24] data/archive/states_2022-06-06-18.csv
+  [20/24] data/archive/states_2022-06-06-19.csv
+  [21/24] data/archive/states_2022-06-06-20.csv
+  [22/24] data/archive/states_2022-06-06-21.csv
+  [23/24] data/archive/states_2022-06-06-22.csv
+  [24/24] data/archive/states_2022-06-06-23.csv
+[01] Saved 60,081,744 rows → data/preprocess_01_output/states_2022-06-06.csv
+
+[01] 2022-06-13: 24 hourly files
+  [1/24] data/archive/states_2022-06-13-00.csv
+  [2/24] data/archive/states_2022-06-13-01.csv
+  [3/24] data/archive/states_2022-06-13-02.csv
+  [4/24] data/archive/states_2022-06-13-03.csv
+  [5/24] data/archive/states_2022-06-13-04.csv
+  [6/24] data/archive/states_2022-06-13-05.csv
+  [7/24] data/archive/states_2022-06-13-06.csv
+  [8/24] data/archive/states_2022-06-13-07.csv
+  [9/24] data/archive/states_2022-06-13-08.csv
+  [10/24] data/archive/states_2022-06-13-09.csv
+  [11/24] data/archive/states_2022-06-13-10.csv
+  [12/24] data/archive/states_2022-06-13-11.csv
+  [13/24] data/archive/states_2022-06-13-12.csv
+  [14/24] data/archive/states_2022-06-13-13.csv
+  [15/24] data/archive/states_2022-06-13-14.csv
+  [16/24] data/archive/states_2022-06-13-15.csv
+  [17/24] data/archive/states_2022-06-13-16.csv
+  [18/24] data/archive/states_2022-06-13-17.csv
+  [19/24] data/archive/states_2022-06-13-18.csv
+  [20/24] data/archive/states_2022-06-13-19.csv
+  [21/24] data/archive/states_2022-06-13-20.csv
+  [22/24] data/archive/states_2022-06-13-21.csv
+  [23/24] data/archive/states_2022-06-13-22.csv
+  [24/24] data/archive/states_2022-06-13-23.csv
+[01] Saved 60,804,652 rows → data/preprocess_01_output/states_2022-06-13.csv
+
+[01] 2022-06-20: 24 hourly files
+  [1/24] data/archive/states_2022-06-20-00.csv
+  [2/24] data/archive/states_2022-06-20-01.csv
+  [3/24] data/archive/states_2022-06-20-02.csv
+  [4/24] data/archive/states_2022-06-20-03.csv
+  [5/24] data/archive/states_2022-06-20-04.csv
+  [6/24] data/archive/states_2022-06-20-05.csv
+  [7/24] data/archive/states_2022-06-20-06.csv
+  [8/24] data/archive/states_2022-06-20-07.csv
+  [9/24] data/archive/states_2022-06-20-08.csv
+  [10/24] data/archive/states_2022-06-20-09.csv
+  [11/24] data/archive/states_2022-06-20-10.csv
+  [12/24] data/archive/states_2022-06-20-11.csv
+  [13/24] data/archive/states_2022-06-20-12.csv
+  [14/24] data/archive/states_2022-06-20-13.csv
+  [15/24] data/archive/states_2022-06-20-14.csv
+  [16/24] data/archive/states_2022-06-20-15.csv
+  [17/24] data/archive/states_2022-06-20-16.csv
+  [18/24] data/archive/states_2022-06-20-17.csv
+  [19/24] data/archive/states_2022-06-20-18.csv
+  [20/24] data/archive/states_2022-06-20-19.csv
+  [21/24] data/archive/states_2022-06-20-20.csv
+  [22/24] data/archive/states_2022-06-20-21.csv
+  [23/24] data/archive/states_2022-06-20-22.csv
+  [24/24] data/archive/states_2022-06-20-23.csv
+[01] Saved 62,463,032 rows → data/preprocess_01_output/states_2022-06-20.csv
+
+[01] 2022-06-27: 24 hourly files
+  [1/24] data/archive/states_2022-06-27-00.csv
+  [2/24] data/archive/states_2022-06-27-01.csv
+  [3/24] data/archive/states_2022-06-27-02.csv
+  [4/24] data/archive/states_2022-06-27-03.csv
+  [5/24] data/archive/states_2022-06-27-04.csv
+  [6/24] data/archive/states_2022-06-27-05.csv
+  [7/24] data/archive/states_2022-06-27-06.csv
+  [8/24] data/archive/states_2022-06-27-07.csv
+  [9/24] data/archive/states_2022-06-27-08.csv
+  [10/24] data/archive/states_2022-06-27-09.csv
+  [11/24] data/archive/states_2022-06-27-10.csv
+  [12/24] data/archive/states_2022-06-27-11.csv
+  [13/24] data/archive/states_2022-06-27-12.csv
+  [14/24] data/archive/states_2022-06-27-13.csv
+  [15/24] data/archive/states_2022-06-27-14.csv
+  [16/24] data/archive/states_2022-06-27-15.csv
+  [17/24] data/archive/states_2022-06-27-16.csv
+  [18/24] data/archive/states_2022-06-27-17.csv
+  [19/24] data/archive/states_2022-06-27-18.csv
+  [20/24] data/archive/states_2022-06-27-19.csv
+  [21/24] data/archive/states_2022-06-27-20.csv
+  [22/24] data/archive/states_2022-06-27-21.csv
+  [23/24] data/archive/states_2022-06-27-22.csv
+  [24/24] data/archive/states_2022-06-27-23.csv
+[01] Saved 61,296,085 rows → data/preprocess_01_output/states_2022-06-27.csv
+
+=== Stage 02: Filter aircraft DB ===
+[02] Loaded 460,000 rows from data/archive/aircraftDatabase-2022-06.csv
+[02] After GA filter: 119,666 rows → data/preprocess_02_output/aircraftDatabase-2022-06-FixedWingGA.csv
+
+=== Stage 03: Filter and sort daily ===
+[03] Loaded 119,666 GA icao24 codes
+
+[03] Processing data/preprocess_01_output/states_2022-06-06.csv ...
+[03] Saved 4,083,638 rows → data/preprocess_03_output/states_2022-06-06-FixedWingGA.csv
+
+[03] Processing data/preprocess_01_output/states_2022-06-13.csv ...
+[03] Saved 3,984,675 rows → data/preprocess_03_output/states_2022-06-13-FixedWingGA.csv
+
+[03] Processing data/preprocess_01_output/states_2022-06-20.csv ...
+[03] Saved 4,911,590 rows → data/preprocess_03_output/states_2022-06-20-FixedWingGA.csv
+
+[03] Processing data/preprocess_01_output/states_2022-06-27.csv ...
+[03] Saved 3,908,604 rows → data/preprocess_03_output/states_2022-06-27-FixedWingGA.csv
+
+Ingest complete.

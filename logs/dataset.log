@@ -1,0 +1,45 @@
+=== Stage 07: Train/test split ===
+
+Pass 1 — determining split ...
+  Total: 114,493  Train: 103,043  Test: 11,450
+
+Pass 2 — routing rows ...
+  ... chunk   20  routed:  1,900,000
+  ... chunk   40  routed:  3,900,000
+  ... chunk   60  routed:  5,900,000
+  ... chunk   80  routed:  7,900,000
+  ... chunk  100  routed:  9,900,000
+  Train rows: 9,841,364  Test rows: 1,113,753
+
+Pass 3 — computing stats ...
+
+  Overlap segment_ids: 0  OK
+[07] Saved → data/train_segments_enu_clean.csv, data/test_segments_enu_clean.csv
+
+=== Stage 08: Make sequence dataset ===
+Loading train: data/train_segments_enu_clean.csv ...
+  [train] 9,841,364 rows, 103,043 segments
+Loading test: data/test_segments_enu_clean.csv ...
+  [test] 1,113,753 rows, 11,450 segments
+
+Creating train sequences ...
+Creating test sequences ...
+
+  X_train: (1412436, 30, 4)   X_test: (160946, 30, 4)
+  Normalised mean (→~0): [-0.0058  0.0035 -0.0028 -0.0021]
+  Normalised std  (→~1): [1.1115 1.104  1.0571 1.0598]
+
+Sanity checks:
+  [PASS] X_train.ndim == 3
+  [PASS] X_test.ndim == 3
+  [PASS] shape[1:] == (30, 4)
+  [PASS] No NaN in X_train
+  [PASS] No NaN in X_test
+  [PASS] No Inf in X_train
+  [PASS] Train/test segs do not overlap
+  [PASS] Metadata rows == sequences (train)
+  [PASS] Metadata rows == sequences (test)
+All checks passed.
+[08] Saved arrays and metadata → data
+
+Dataset complete.

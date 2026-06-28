@@ -1,0 +1,79 @@
+=== Stage 04: Generate trajectories ===
+
+=======================================================
+  2022-06-06
+=======================================================
+  After row filters: 3,320,052 rows remaining
+  Time-gap splits: 15,294  Speed splits: 74,745
+  Short-segment pings dropped: 697,775
+  Running total segments: 26,623
+
+=======================================================
+  2022-06-13
+=======================================================
+  After row filters: 3,282,431 rows remaining
+  Time-gap splits: 15,761  Speed splits: 80,968
+  Short-segment pings dropped: 754,404
+  Running total segments: 53,818
+
+=======================================================
+  2022-06-20
+=======================================================
+  After row filters: 4,163,522 rows remaining
+  Time-gap splits: 19,678  Speed splits: 96,497
+  Short-segment pings dropped: 898,799
+  Running total segments: 87,852
+
+=======================================================
+  2022-06-27
+=======================================================
+  After row filters: 3,302,787 rows remaining
+  Time-gap splits: 15,134  Speed splits: 77,196
+  Short-segment pings dropped: 710,923
+  Running total segments: 114,826
+
+[04] 114,826 segments → data/preprocess_04_output/trajectory_segments.csv
+
+=== Stage 05: Convert to ENU ===
+
+============================================================
+  Stage 05: Convert to ENU
+  Input : data/preprocess_04_output/trajectory_segments.csv
+============================================================
+  Rows: 11,006,891  Segments: 114,826
+  Processing 114,826 segments ...
+     10,000 / 114,826   valid so far: 10,000
+     20,000 / 114,826   valid so far: 20,000
+     30,000 / 114,826   valid so far: 30,000
+     40,000 / 114,826   valid so far: 40,000
+     50,000 / 114,826   valid so far: 50,000
+     60,000 / 114,826   valid so far: 60,000
+     70,000 / 114,826   valid so far: 70,000
+     80,000 / 114,826   valid so far: 80,000
+     90,000 / 114,826   valid so far: 90,000
+    100,000 / 114,826   valid so far: 100,000
+    110,000 / 114,826   valid so far: 110,000
+  Done — valid: 114,826  skipped: 0
+[05] 11,006,891 rows → data/preprocess_05_output/trajectory_segments_enu_with_velocity.csv
+  Skipped: 0  Max |origin|: 0.00e+00 m  NaNs: 0
+
+=== Stage 06: Clean outliers ===
+
+============================================================
+  Stage 06: Clean outliers
+  Input : data/preprocess_05_output/trajectory_segments_enu_with_velocity.csv
+============================================================
+  ... chunk   20  rows:  2,000,000  segs:  19,121
+  ... chunk   40  rows:  4,000,000  segs:  40,167
+  ... chunk   60  rows:  6,000,000  segs:  61,293
+  ... chunk   80  rows:  8,000,000  segs:  82,525
+  ... chunk  100  rows: 10,000,000  segs: 103,104
+[06] Rows:     11,006,891 → 10,955,117 (dropped 51,774)
+[06] Segments: 114,826 → 114,493 (dropped 333)
+  keep                        : 114,493
+  speed_and_accel_outlier     :    294
+  accel_outlier               :     27
+  speed_outlier               :     12
+[06] Saved → data/preprocess_06_output/trajectory_segments_enu_clean.csv
+
+Pipeline complete.
